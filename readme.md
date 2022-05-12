@@ -1,19 +1,16 @@
 
 Test code for Buoyancy Engine
+This repository contains the test code for the SeaFlight Boyancy Engine that is within the SeaFlight glider.  It runs a Teensy 3.5 which was choosen for its ability to quickly change from low power and a slow CPU to high power and a faster CPU.  It is also part of the Arduino development ecosystem though with an adapted version called "teensyduino" which needs to be downloaded.
 
-1. Download Arduino IDE:
-https://www.arduino.cc/en/software
+How to download and build:
+1. Download Teensyduino IDE:
+https://www.pjrc.com/teensy/td_download.html
 
-2. This version runs on a Adafruit Grand Central which uses a SAMD51 processor.  
-To compile for this board, you will need to add Adafruit SAMD51 link.
-Go to "Preferences" and paste the following to to the "Additional Boards Manager URLs:"
-https://adafruit.github.io/arduino-board-index/package_adafruit_index.json
+2. This version runs on a Teensy 3.5.  In "tools" -> "Board" -> Teensyduino -> choose "Teensy 3.5"
 
+3. Clone this repository.  [how to clone a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository)
 
-3. Go to "Tools" and "Board" then "Boards Manager", filter by "Adafruit" and install the "Adafruit SAMD Boards"
+6. There are a number of libraries needed which are listed in the BouyancyEngineTest file.
 
-4. Libraries:
-4a. Download the .zip file for this github repository for the Adafruit SAMD libraries:
-https://github.com/arduino/ArduinoCore-samd
 
 
