@@ -1,43 +1,56 @@
-#include "SparkFun_Ublox_Arduino_Library.h" // library: http://librarymanager/All#SparkFun_u-blox_GNSS
+/*  SeaFlight Glider
+    Compass HMC6343
+
+
+    More information:     https://www.sparkfun.com/products/12916
+    Interfacing guide:    https://github.com/sparkfun/SparkFun_HMC6343_Arduino_Library
+
+    Todo:
+    - add SD Card Interface
+    - add time since last update
+    - add clock sync
+    - 
+*/
+
 
 #define UTF8_HEX_DEGREE_SYMBOL                  "\xC2\xB0"
-const unsigned int COMPASS_HMC6343_REFRESH_DELAY = 200;
+const unsigned int COMPASS_REFRESH_DELAY = 2000;
 
 SFE_HMC6343 compass; // Declare the sensor object
-bool validCompassHMC6343 = false;
-long previousMillisCompassHMC6343 = 0;
+bool validCompass = false;
+long previousMillisCompass = 0;
 
-void setupCompassHMC6343() {
+void setupCompass() {
   if (!compass.init())
   {
-    validCompassHMC6343 = false;
-    Serial.println("Sensor Initialization Failed\n\r"); // Report failure, is the sensor wiring correct?
+    validCompass = false;
+    Log.error(module::SENSOR, "NOT DETECTED: Compass HMC6343 chip\n");
   }
   else {
-    Serial.println("CompassHMC6343 Sensor Found");
-    validCompassHMC6343 = true;
+    Log.info(module::SENSOR, "DETECTED: Compass HMC6343 chip\n");
+    validCompass = true;
   }
-
 }
 
-void loopCompassHMC6343() {
-  if (validCompassHMC6343) {
+void loopCompass() {
+  if (validCompass) {
     unsigned long currentMillis = millis();
-    if (currentMillis - previousMillisCompassHMC6343 > CLOCK_RV1805_REFRESH_DELAY) {
-      previousMillisClockRV1805 = millis();
+    if (currentMillis - previousMillisCompass > COMPASS_REFRESH_DELAY) {
+      previousMillisCompass = millis();
       // Read, calculate, and print the heading, pitch, and roll from the sensor
       compass.readHeading();
       compass.readMag();
       compass.readTilt();
       // Read, calculate, and print the acceleration on the x, y, and z axis of the sensor
       compass.readAccel();
+      Log.info(module::SENSOR, "DETECTED: Compass HMC6343 chip\n");
 
     }
   }
 }
 
-void vt100DashDisplayCompassHMC6343(bool refreshAll, int x, int y) {
-  if (validCompassHMC6343) {
+void vt100DashDisplayCompass(bool refreshAll, int x, int y) {
+  if (validCompass) {
     if (refreshAll) {
 
     }

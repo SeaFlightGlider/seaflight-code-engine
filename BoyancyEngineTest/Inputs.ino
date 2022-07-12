@@ -1,4 +1,4 @@
-#include <SparkFun_Qwiic_Button.h>
+#include <SparkFun_Qwiic_Button.h>          // library: https://github.com/sparkfun/SparkFun_Qwiic_Button_Arduino_Library
 QwiicButton redStopButton;
 
 bool stopButtonON = false;

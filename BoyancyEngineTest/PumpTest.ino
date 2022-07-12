@@ -5,17 +5,17 @@
     PUMP OUT means pumping out of the reservoir (and into the bladder)  i.e. CLIMBING
 
     Todo:
-Blue Robotics ESC:
-- Stopped  1500 microseconds
-- Max forward 1900 microseconds
-- Max reverse 1100 microseconds
+  Blue Robotics ESC:
+  - Stopped  1500 microseconds
+  - Max forward 1900 microseconds
+  - Max reverse 1100 microseconds
 
-jeremy:
-180 - forward
-25 - reverse
-95 - neutral
-1 amp = 200ml/minute
-3.5 amps = 25 ml/minute
+  jeremy:
+  180 - forward
+  25 - reverse
+  95 - neutral
+  1 amp = 200ml/minute
+  3.5 amps = 25 ml/minute
 
 */
 
@@ -23,7 +23,7 @@ jeremy:
 #define RUN_CYCLES  2                //number of complete cycles (i.e. dives) to go through
 #define PRESSURE_UPPER_LIMIT 15   //Pressure Upper Limit
 #define PRESSURE_LOWER_LIMIT -5   //Pressure Lower Limit
-//#define SOLENOID_PIN LED_BUILTIN //9
+
 #define ON  1
 #define OFF 0
 
@@ -31,6 +31,7 @@ jeremy:
 #define PUMP_INTERVAL_OUT_POSTDELAY   5000    //amount of time between cycles.. 
 #define PUMP_INTERVAL_IN_PUMP_ON      5000    //amount of time pump IN is ON
 #define PUMP_INTERVAL_OUT_PUMP_ON     5000    //amount of time pump OUT is ON 
+#define PUMP_INTERVAL_STANDBY         500    //mount of time LED blinks to show it's in standby
 
 #define CYCLE_START_WITH_PUMP_IN 1
 
@@ -40,100 +41,115 @@ jeremy:
 #define KEY_SOLENOID_TOGGLE           115     //letter 's' lowercase
 #define KEY_NEXT_STATE                110     //letter 'n' lowercase
 #define KEY_VT100_DASH_TOGGLE         100     //letter 'd' lowercase
+#define KEY_PUMP_EXIT                 120     //letter 'x' lowercase 
 
 unsigned long previousMillisPUMP_IN = 0;
 unsigned long previousMillisPUMP_OUT = 0;
 unsigned long previousMillisPUMP_IN_ON = 0;
 unsigned long previousMillisPUMP_OUT_ON = 0;
+unsigned long previousMillisPUMP_STANDBY = 0;
 
 bool actualPumpOnIn = OFF;
 bool actualPumpOnOut = OFF;
 bool actualSolenoidOn = OFF;
+bool validPumpTest = false;
 
 void setupPumpTest() {
-  changePumpTestState(PUMP_INIT);
+  //changePumpTestState(PUMP_INIT);
+  validPumpTest = true;
 }
 
 void loopPumpTest() {
   unsigned long currentMillis = millis();
   byte b;
-  if (engineTestState == PUMP_TEST) {
-    if (pumpTestState == PUMP_STANDBY) {
-      loopPumpStandbyRespondToKeyPresses();
-    }
-    if (pumpTestState == PUMP_OFF) {  //pump_off is only to turn everything off, then jump to standby
-      changePumpTestState(PUMP_STANDBY);
-    }
-    else if (pumpTestState == PUMP_IN_ON) {
-      b = checkSerial();
-      if (b == KEY_NEXT_STATE) {                  //pressing 'n' will skip to next state
-        changePumpTestState(PUMP_IN_HOLD);
-      } 
-      else if (currentMillis - previousMillisPUMP_IN_ON > PUMP_INTERVAL_IN_PUMP_ON) {
-        changePumpTestState(PUMP_IN_HOLD);
+  if (validPumpTest) {
+    if (engineTestState == ENGINETEST_PUMP_TEST) {
+      if (pumpTestState == PUMP_INIT) {
+        changePumpTestState(PUMP_STANDBY);
       }
-      else if (latestPressureM300_BLADDER >= PRESSURE_UPPER_LIMIT ) { 
-        changePumpTestState(PUMP_IN_HOLD);
+      else if (pumpTestState == PUMP_STANDBY) {
+
       }
-      else if (b == KEY_START_PUMP_TEST_CYCLE) { //press 't' again to stop test (toggle)
-        changePumpTestState(PUMP_OFF);
+      else if (pumpTestState == PUMP_KEYPRESSWAIT) {
+        loopPumpStandbyRespondToKeyPresses();
+        if (currentMillis - previousMillisPUMP_STANDBY > PUMP_INTERVAL_STANDBY) {
+          digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));
+          previousMillisPUMP_STANDBY = millis();
+        }
       }
-    }
-    else if (pumpTestState == PUMP_OUT_ON) {
-      b = checkSerial();
-      if(b == KEY_NEXT_STATE){
-        changePumpTestState(PUMP_OUT_HOLD);
+      if (pumpTestState == PUMP_OFF) {  //pump_off is only to turn everything off, then jump to standby
+        changePumpTestState(PUMP_STANDBY);
       }
-      else if (currentMillis - previousMillisPUMP_OUT_ON > PUMP_INTERVAL_OUT_PUMP_ON) {
-        changePumpTestState(PUMP_OUT_HOLD);
+      else if (pumpTestState == PUMP_IN_ON) {
+        b = checkSerial();
+        if (b == KEY_NEXT_STATE) {                  //pressing 'n' will skip to next state
+          changePumpTestState(PUMP_IN_HOLD);
+        }
+        else if (currentMillis - previousMillisPUMP_IN_ON > PUMP_INTERVAL_IN_PUMP_ON) {
+          changePumpTestState(PUMP_IN_HOLD);
+        }
+        else if (latestPressureM300_BLADDER >= PRESSURE_UPPER_LIMIT ) {
+          changePumpTestState(PUMP_IN_HOLD);
+        }
+        else if (b == KEY_START_PUMP_TEST_CYCLE) { //press 't' again to stop test (toggle)
+          changePumpTestState(PUMP_OFF);
+        }
       }
-      else if (latestPressureM300_BLADDER < PRESSURE_LOWER_LIMIT) {
-        changePumpTestState(PUMP_OUT_HOLD);
+      else if (pumpTestState == PUMP_OUT_ON) {
+        b = checkSerial();
+        if (b == KEY_NEXT_STATE) {
+          changePumpTestState(PUMP_OUT_HOLD);
+        }
+        else if (currentMillis - previousMillisPUMP_OUT_ON > PUMP_INTERVAL_OUT_PUMP_ON) {
+          changePumpTestState(PUMP_OUT_HOLD);
+        }
+        else if (latestPressureM300_BLADDER < PRESSURE_LOWER_LIMIT) {
+          changePumpTestState(PUMP_OUT_HOLD);
+        }
+        else if (b == KEY_START_PUMP_TEST_CYCLE) { //press 't' again to stop test (toggle)
+          changePumpTestState(PUMP_OFF);
+        }
       }
-      else if (b == KEY_START_PUMP_TEST_CYCLE) { //press 't' again to stop test (toggle)
-        changePumpTestState(PUMP_OFF);
+      else if (pumpTestState == PUMP_IN_HOLD) {
+        b = checkSerial();
+        if (currentMillis - previousMillisPUMP_IN > PUMP_INTERVAL_IN_POSTDELAY || b == KEY_NEXT_STATE) {
+          changePumpTestState(PUMP_OUT_ON);
+        }
+        else if (b == KEY_START_PUMP_TEST_CYCLE) { //press 't' again to stop test (toggle)
+          changePumpTestState(PUMP_OFF);
+        }
       }
-    }
-    else if (pumpTestState == PUMP_IN_HOLD) {
-      b = checkSerial();
-      if (currentMillis - previousMillisPUMP_IN > PUMP_INTERVAL_IN_POSTDELAY || b == KEY_NEXT_STATE) {
-        changePumpTestState(PUMP_OUT_ON);
+      else if (pumpTestState == PUMP_OUT_HOLD) {
+        b = checkSerial();
+        if (currentMillis - previousMillisPUMP_OUT > PUMP_INTERVAL_OUT_POSTDELAY || b == KEY_NEXT_STATE) {
+          changePumpTestState(PUMP_IN_ON);
+        }
+        else if (b == KEY_START_PUMP_TEST_CYCLE) { //press 't' again to stop test (toggle)
+          changePumpTestState(PUMP_OFF);
+        }
       }
-      else if (b == KEY_START_PUMP_TEST_CYCLE) { //press 't' again to stop test (toggle)
-        changePumpTestState(PUMP_OFF);
+      else if (pumpTestState == PUMP_OFF) {
+        digitalWrite(SOLENOID_PIN, LOW);
+        //turn pumpoff
       }
-    }
-    else if (pumpTestState == PUMP_OUT_HOLD) {
-      b = checkSerial();
-      if (currentMillis - previousMillisPUMP_OUT > PUMP_INTERVAL_OUT_POSTDELAY || b == KEY_NEXT_STATE) {
-        changePumpTestState(PUMP_IN_ON);
-      }
-      else if (b == KEY_START_PUMP_TEST_CYCLE) { //press 't' again to stop test (toggle)
-        changePumpTestState(PUMP_OFF);
-      }
-    }
-    else if (pumpTestState == PUMP_OFF) {
-      digitalWrite(SOLENOID_PIN, LOW);
-      //turn pumpoff
-    }
-    else if (pumpTestState == PUMP_INIT) {
-      changePumpTestState(PUMP_STANDBY);
     }
   }
-
 }
 
 void changePumpTestState(enum PumpTestState newState) {
+  Log.info(module::PUMP, "PUMP STATE CHANGE: from %s to %s\n", pumpTestStateStr[pumpTestState]);
   if (newState == PUMP_INIT) {
-    initControlPump();
+    //initControlPump();
   }
-  else if (newState == PUMP_STANDBY) {
-    out.println("PUMP_STANDBY accepting serial commands:");
+  else if (newState == PUMP_KEYPRESSWAIT) {
+    out.println("---------------------------------------");
+    out.println("PUMP_KEYPRESSWAIT accepting serial commands:");
     out.println("(t) to begin engine cycle test");
     out.println("(s) to toggle solenoid");
     out.println("(i) to toggle pump IN (into reservoir, out of bladder)");
     out.println("(o) to toggle pump OUT (out of reservoir, into bladder)");
-
+    out.println("(x) to EXIT menu");
+    out.println("---------------------------------------");
   }
   else if (newState == PUMP_IN_ON) {
     controlSolenoid(ON);
@@ -152,14 +168,14 @@ void changePumpTestState(enum PumpTestState newState) {
     controlSolenoid(OFF);
     pumpIn(OFF);
     previousMillisPUMP_IN = millis();       //mark time for timer for how long to be in 'hold' state
-    out.print("State: PUMP_IN_HOLD seconds:");  
+    out.print("State: PUMP_IN_HOLD seconds:");
     Serial.println(PUMP_INTERVAL_IN_POSTDELAY);
   }
   else if (newState == PUMP_OUT_HOLD) {
     controlSolenoid(OFF);
     pumpOut(OFF);
     previousMillisPUMP_OUT = millis();      //mark time for timer for how long to be in 'hold' state
-    out.print("State: PUMP_IN_HOLD seconds:");  
+    out.print("State: PUMP_IN_HOLD seconds:");
     Serial.println(PUMP_INTERVAL_IN_POSTDELAY);
   }
   else if (newState == PUMP_OFF) {
@@ -256,57 +272,67 @@ void pumpTestProcessInput(byte incomingByte) {
 }
 
 void loopPumpStandbyRespondToKeyPresses() {
-  byte b = checkSerial();
-  if (b == KEY_START_PUMP_TEST_CYCLE) {
-    changePumpTestState(PUMP_IN_ON);
-  }
-  else if (b == KEY_PUMP_IN_TOGGLE) {
-    if (actualPumpOnIn) {
-      pumpIn(OFF);
-    } else {
-      pumpIn(ON);
-    }
-#ifdef ENGINE_DEBUG_PRINT
-    out.print("KEY_PUMP_IN_TOGGLE pumpval= ");
-    out.println(actualPumpOnIn);
-#endif
-  }
-  else if (b == KEY_PUMP_OUT_TOGGLE) {
-    if (actualPumpOnOut) {
-      pumpOut(OFF);
-    } else {
-      pumpOut(ON);
-    }
-#ifdef ENGINE_DEBUG_PRINT
-    out.print("KEY_PUMP_OUT_TOGGLE pumpval= ");
-    out.println(actualPumpOnOut);
-#endif
-  }
-  else if (b == KEY_SOLENOID_TOGGLE) {
-    if (actualSolenoidOn) {
-      controlSolenoid(OFF);
-    }
-    else {
-      controlSolenoid(ON);
-    }
-#ifdef ENGINE_DEBUG_PRINT
-    out.print("KEY_SOLENOID_TOGGLE pumpval= ");
-    out.println(actualSolenoidOn);
-#endif
-  }
-  else if (b == KEY_VT100_DASH_TOGGLE) {
-    Serial.end();
-    if (displayVT100Dash) {
-      displayVT100Dash = false;
-    }
-    else {
-      displayVT100Dash = true;
+  if (Serial.available()) {
+    byte b = Serial.read();  // will not be -1
 
+    if (b == KEY_START_PUMP_TEST_CYCLE) {
+      changePumpTestState(PUMP_IN_ON);
     }
+    else if (b == KEY_PUMP_IN_TOGGLE) {
+      if (actualPumpOnIn) {
+        pumpIn(OFF);
+      } else {
+        pumpIn(ON);
+      }
 #ifdef ENGINE_DEBUG_PRINT
-    out.print("KEY_VT100_DASH_TOGGLE displayVT100Dash= ");
-    out.println(displayVT100Dash);
+      out.print("KEY_PUMP_IN_TOGGLE pumpval= ");
+      out.println(actualPumpOnIn);
 #endif
+    }
+    else if (b == KEY_PUMP_OUT_TOGGLE) {
+      if (actualPumpOnOut) {
+        pumpOut(OFF);
+      } else {
+        pumpOut(ON);
+      }
+#ifdef ENGINE_DEBUG_PRINT
+      out.print("KEY_PUMP_OUT_TOGGLE pumpval= ");
+      out.println(actualPumpOnOut);
+#endif
+    }
+    else if (b == KEY_SOLENOID_TOGGLE) {
+      if (actualSolenoidOn) {
+        controlSolenoid(OFF);
+      }
+      else {
+        controlSolenoid(ON);
+      }
+#ifdef ENGINE_DEBUG_PRINT
+      out.print("KEY_SOLENOID_TOGGLE pumpval= ");
+      out.println(actualSolenoidOn);
+#endif
+    }
+    else if (b == KEY_PUMP_EXIT) {
+      changePumpTestState(PUMP_OFF);
+      changePumpTestState(PUMP_STANDBY);
+      changeEngineTestState(ENGINETEST_KEYPRESSWAIT);
+    }
+    else if (b == KEY_VT100_DASH_TOGGLE) {
+      Serial.end();
+      if (displayVT100Dash) {
+        displayVT100Dash = false;
+      }
+      else {
+        displayVT100Dash = true;
+      }
+#ifdef ENGINE_DEBUG_PRINT
+      out.print("KEY_VT100_DASH_TOGGLE displayVT100Dash= ");
+      out.println(displayVT100Dash);
+#endif
+    }
+  }
+  else {
+    //Serial.println("loopPumpStandbyRespondToKeyPresses serial NOT available");
   }
 }
 

@@ -13,7 +13,7 @@
 #define UTF8_HEX_UPPER_RIGHT_CORNER             "\xE2\x94\x90"
 #define UTF8_HEX_UPPER_LEFT_CORNER              "\xE2\x94\x8C"
 #define UTF8_HEX_LOWER_RIGHT_CORNER             "\xE2\x94\x98"
-#define UTF8_HEX_LOWER_LEFT_CORNER              "\xE2\x94\x94"   
+#define UTF8_HEX_LOWER_LEFT_CORNER              "\xE2\x94\x94"
 #define UTF8_HEX_HORIZONTAL_LINE                "\xE2\x94\x80"
 #define UTF8_HEX_VERTICAL_LINE                  "\xE2\x94\x82"
 
@@ -55,8 +55,8 @@ void vt100DashLoop(void) {
       vt100DashDrawBox(refreshDisplay);
       vt100DashDisplayTopLine(refreshDisplay);
       vt100DashDisplayPressure(refreshDisplay, PRESSURE_X, PRESSURE_Y);
-      vt100DashDisplaygpsNeoM8U(refreshDisplay, GPS_X, GPS_Y);
-      vt100DashDisplayCompassHMC6343(refreshDisplay, COMPASS_X, COMPASS_Y);
+      vt100DashDisplayGPS(refreshDisplay, GPS_X, GPS_Y);
+      vt100DashDisplayCompass(refreshDisplay, COMPASS_X, COMPASS_Y);
       vt100DashDisplayStateMachine(refreshDisplay, STATE_X, STATE_Y);
       refreshAllCounter++;
     }
@@ -67,25 +67,25 @@ void vt100DashLoop(void) {
 void vt100DashDrawBox(bool refreshAll) {
   if (refreshAll) {
     term.position(1, 0);
-    Serial.print(UTF8_HEX_UPPER_LEFT_CORNER);             
-    for (int w = 0; w < VT100_WIDTH-1; w++) {
-      Serial.print(UTF8_HEX_HORIZONTAL_LINE);           
+    Serial.print(UTF8_HEX_UPPER_LEFT_CORNER);
+    for (int w = 0; w < VT100_WIDTH - 1; w++) {
+      Serial.print(UTF8_HEX_HORIZONTAL_LINE);
     }
-    Serial.print(UTF8_HEX_UPPER_RIGHT_CORNER);             
+    Serial.print(UTF8_HEX_UPPER_RIGHT_CORNER);
     for (int y = 2; y < VT100_HEIGHT; y++) {
-      term.position(y,0);
-      Serial.print(UTF8_HEX_VERTICAL_LINE);           
-      term.position(y,VT100_WIDTH);
-      Serial.print(UTF8_HEX_VERTICAL_LINE);           
+      term.position(y, 0);
+      Serial.print(UTF8_HEX_VERTICAL_LINE);
+      term.position(y, VT100_WIDTH);
+      Serial.print(UTF8_HEX_VERTICAL_LINE);
     }
     term.position(VT100_HEIGHT, 0);
-    Serial.print("\xE2\x94\x94");             
-    for (int w = 0; w < VT100_WIDTH-1; w++) {
-      Serial.print(UTF8_HEX_HORIZONTAL_LINE);           
+    Serial.print("\xE2\x94\x94");
+    for (int w = 0; w < VT100_WIDTH - 1; w++) {
+      Serial.print(UTF8_HEX_HORIZONTAL_LINE);
     }
-    Serial.print(UTF8_HEX_LOWER_RIGHT_CORNER);             
+    Serial.print(UTF8_HEX_LOWER_RIGHT_CORNER);
   }
-  
+
 }
 
 void vt100DashDisplayTopLine(bool refreshAll) {
