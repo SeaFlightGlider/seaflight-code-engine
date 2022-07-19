@@ -8,7 +8,7 @@
 //as below..  this is because this i2c library allows us to use all the i2c ports on the teensy..
 #include <i2c_t3.h>                         //library: https://github.com/nox771/i2c_t3
 #include "TeensySDRotationalModuleLogger.h" //library: https://github.com/embeddedartistry/arduino-logger
-#include <SerLCD.h>                         //Click here to get the library: http://librarymanager/All#SparkFun_SerLCD
+//#include <SerLCD.h>                       // Depreciated, no longer using this display module - Click here to get the library: http://librarymanager/All#SparkFun_SerLCD
 #include <Adafruit_GFX.h>
 #include <Adafruit_SH110X.h>
 //#include <SD.h>                             //might be a conflict, if so delete the one 'not used'
@@ -162,7 +162,7 @@ long Pressure;
 int Pset = 75;   //Pressure Upper Limit
 int Pmin = 10;   //Pressure Lower Limit
 
-SerLCD lcd; // Initialize the library with default I2C address 0x72
+// SerLCD lcd; // Initialize the library with default I2C address 0x72
 RV1805 rtc;
 
 bool usingVT100 = true;
@@ -173,6 +173,8 @@ void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));
   Serial.begin(115200);
+
+  setupLCDDisplay();
 
   int serialDelay = 0;
 
@@ -201,7 +203,6 @@ void setup() {
   Wire.begin(I2C_MASTER, 0x00, I2C_PINS_18_19, I2C_PULLUP_INT, 200000);
   //Wire.setDefaultTimeout(200000); // 200ms
 
-  setupLCDDisplay();
 
   gliderState = BENCH;
   benchState = TESTING;
@@ -211,41 +212,40 @@ void setup() {
   steeringTestState = STEER_STANDBY;
   
   setupPower();
-  setupGPS();
-  setupTime();
+  //setupGPS();
+  //setupTime();
   setupPressure();
   SetupEngineTest();
-  setupPumpTest();
-  setupControlPump();
+  setupPumpTest();setupControlPump();
   setupTOF();
-  setupLeakDetect();
-  setupSteering();
+  //setupLeakDetect();
+  //setupSteering();
   //setupInputs();
   //setupStorage();
   //setupIMU();
   //setupCompass();
   //vt100DashSetup();
 
-  changeEngineTestState(ENGINETEST_KEYPRESSWAIT);
+   changeEngineTestState(ENGINETEST_KEYPRESSWAIT);
 
   digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));
 }
 
 void loop() {
-  loopTime();
+  //loopTime();
   loopPower();
   loopGPS();
   loopPressure();
   loopTOF();
   loopEngineTest();
   loopPumpTest();
-  loopSteering();
+  //loopSteering();
 
   //loopInputs();
-  //loopLCDDisplay();
-  loopLeakDetect();
-  loopIMU();
-  loopCompass();
+  loopLCDDisplay();
+  //loopLeakDetect();
+  //loopIMU();
+  //loopCompass();
   //vt100DashLoop();
-  loopStorage();
+  //loopStorage();
 }
