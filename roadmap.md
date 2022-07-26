@@ -1,10 +1,11 @@
-# Roadmap
-1. close bottle
+## Roadmap
+
+# close bottle
 
    - mechanical
       1. move hydraulic line to endcap
-         - make something for engine to sit on sideways
-         - don't stress bladder by running without watter
+         - make something for engine to sit on the bench sideways
+         - don't stress bladder by running without water
       2. mount motor conroller between bouyancy engine and 
       3. 80/20 mount for main engine tube and bladder
       4. maybe add rudder and wing for full proof of concept.
