@@ -1,5 +1,3 @@
-
-
 //CONSIDER using mavlink to be able to 'play back' logs on missioncontrol software
 // like this: https://github.com/mehdilauters/MavlinkSerialSdLogger
 // MAKE SURE THAT THE SD CARD LIBRARY IS THE NEWEST ONE, ONLY AVALIABLE WHEN DOWNLOADING IDE, NOT ON GITHUB
@@ -24,7 +22,11 @@ void setupStorage() {
     validSDCard = true;
   }
   root = SD.open("/");
+  Serial.println("---------------------------------------");
+  Serial.println("");
   Serial.println("type 'file' to go to files menu");
+  Serial.println("");
+  Serial.println("---------------------------------------");
 }
 
 
