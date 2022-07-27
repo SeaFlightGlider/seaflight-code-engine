@@ -1,6 +1,7 @@
 //CONSIDER using mavlink to be able to 'play back' logs on missioncontrol software
 // like this: https://github.com/mehdilauters/MavlinkSerialSdLogger
-// MAKE SURE THAT THE SD CARD LIBRARY IS THE NEWEST ONE, ONLY AVALIABLE WHEN DOWNLOADING IDE, NOT ON GITHUB
+// MAKE SURE THAT THE SD CARD LIBRARY IS THE NEWEST ONE, ONLY AVALIABLE WHEN DOWNLOADING IDE, NOT ON GITHUB, LINK BELOW
+// https://drive.google.com/drive/folders/1ms9dZfpnZduC7-vpsqOPZyQeZNXBNqy4?usp=sharing
 File root;
 String userfirstinput;
 String usersecondinput;
