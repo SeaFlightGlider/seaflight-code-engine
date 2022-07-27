@@ -28,23 +28,21 @@ void setupLCDDisplay() {
   display.setTextSize(1);
   display.setTextColor(SH110X_WHITE);
   display.setCursor(0,0);
-  display.print("Connecting to SSID\n'adafruit':");
-  display.print("connected!");
-  display.println("IP: 10.0.1.23");
-  display.println("Sending val #0");
+  display.print("SeaFlight Glider V0.1 Starting..");
   display.display(); // actually display all of the above
   /*
-  lcd.begin(Wire); //Set up the LCD for I2C communication
+  display.begin(Wire); //Set up the LCD for I2C communication
 
-  lcd.setBacklight(200, 255, 255); //Set backlight to bright white
-  lcd.setContrast(3); //Set contrast. Lower to 0 for higher contrast.
+  display.setBacklight(200, 255, 255); //Set backlight to bright white
+  display.setContrast(3); //Set contrast. Lower to 0 for higher contrast.
 
-  lcd.clear(); //Clear the display - this moves the cursor to home position as well
-  lcd.print("SeaFlightGlider 0.01");
+  display.clear(); //Clear the display - this moves the cursor to home position as well
+  display.print("SeaFlightGlider 0.01");
   //disableMuxPort(LCD_MUX);
   */
-  display.display();
   delay(1000);
+  display.clearDisplay();
+  display.display();
 }
 
 void loopLCDDisplay() {
@@ -52,71 +50,70 @@ void loopLCDDisplay() {
   if (currentMillis - previousMillisLCDRefresh > LCD_REFRESH_DELAY) {
     previousMillisLCDRefresh = millis();
     if (displayCNT++ > 10) {
-      lcdWritePressureReservoir();
-      lcdWritePressureBladder();
-      lcdWritePumpTestState();
-      lcdWriteTOF();
-      lcdWriteInput();
+      display.clearDisplay();
+      displayWritePressureReservoir();
+      displayWritePressureBladder();
+      displayWritePumpTestState();
+      displayWriteTOF();
+      displaySolenoidState();
+      //displayWriteInput();
       displayCNT = 0;
     }
-    lcdWriteTimeDate();
+    //displayWriteTimeDate();
+    display.display();
   }
 }
 
-void lcdWriteTimeDate() {
-  //lcd.setCursor(0, 0);
-  //lcd.print("                 ");
-  lcd.setCursor(0, 0);
-  lcd.print(currentDate);
-  lcd.print(currentTime);
+void displayWriteTimeDate() {
+  display.setCursor(0, 4);
+  display.print(currentDate);
+  display.print(currentTime);
 }
-void lcdWritePressureReservoir() {
+void displayWritePressureReservoir() {
   
-  lcd.setCursor(0, 4);
-  lcd.print("      ");
-  lcd.setCursor(0, 4);
-  lcd.print(latestPressureM300_RESERVOIR);
+  display.setCursor(0, 20);
+  display.print("reservoir P=");
+  display.print(latestPressureM300_RESERVOIR);
 }
 
-void lcdWritePressureBladder() {
- 
-  lcd.setCursor(6, 3);
-  lcd.print("   ");
-  lcd.setCursor(6, 3);
-  lcd.print(latestPressureM300_BLADDER);
+void displayWritePressureBladder() {
+  display.setCursor(0, 10);
+  display.print("Bladder P=");
+  display.print(latestPressureM300_BLADDER);
 }
 
-void lcdWriteInput() {
+void displayWriteInput() {
   if (stopButtonON) {
-    lcd.setCursor(18, 4);
-    lcd.print("S");
+    display.setCursor(18, 4);
+    display.print("S");
   }
   else {
-    lcd.setCursor(18, 4);
-    lcd.print(" ");
+    display.setCursor(18, 4);
+    display.print(" ");
   }
 }
-void lcdWriteTOF() {
-  lcd.setCursor(10, 3);
-  lcd.print("         ");
-  lcd.setCursor(10, 3);
+void displayWriteTOF() {
+  display.setCursor(0, 0);
   if (reservoirDistanceTOF == 255) {
-    lcd.print("TOF=inf");
+    display.print("TOF=inf");
   } else {
-    lcd.print("TOF=");
-    lcd.print(reservoirDistanceTOF);
-    lcd.print("cm");
+    display.print("TOF=");
+    display.print(reservoirDistanceTOF);
+    display.print("mm");
   }
 }
 
-void lcdWritePumpTestState() {
-  //enableMuxPort(LCD_MUX);
-  lcd.setCursor(0, 2);
-  lcd.print("                    ");
-  lcd.setCursor(0, 2);
-  lcd.print("State=");
-  //lcd.setCursor(7, 2);
-  lcd.print(pumpTestStateStr[pumpTestState]);
-  //lcd.print("     ");
-  //disableMuxPort(LCD_MUX);
+void displayWritePumpTestState() {
+  display.setCursor(0, 30);
+  display.print(pumpTestStateStr[pumpTestState]);
 }
+
+void displaySolenoidState() {
+  display.setCursor(0, 40);
+  if(actualSolenoidOn) display.print("solenoid on");
+  display.setCursor(0, 50);
+  if(actualPumpOnOut) display.print("pump out");
+  if(actualPumpOnIn) display.print("pump In");
+}
+
+
