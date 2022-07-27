@@ -11,7 +11,7 @@
 #include <SerLCD.h>                         //Click here to get the library: http://librarymanager/All#SparkFun_SerLCD
 #include <Adafruit_GFX.h>
 #include <Adafruit_SH110X.h>
-//#include <SD.h>                             //might be a conflict, if so delete the one 'not used'
+#include <SD.h>                             //might be a conflict, if so delete the one 'not used'
 #include <SPI.h>
 #include "Adafruit_VL6180X.h"               // library: https://github.com/adafruit/Adafruit_VL6180X
 #include "SparkFun_RV1805.h"                // library: https://github.com/sparkfun/SparkFun_RV-1805_Arduino_Library/archive/master.zip  https://github.com/sparkfun/SparkFun_RV-1805_Arduino_Library
