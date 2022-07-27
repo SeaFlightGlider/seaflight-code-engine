@@ -108,7 +108,7 @@ void getPressure_EXTERNAL(bool logprint)
   latestPressureData.depth = sensorExtPressureKellerLD.depth();
   latestPressureData.altitudee = sensorExtPressureKellerLD.altitude();  //yes, we are an underwater robot, but you never know..
   if (logprint) {
-    Log.info(module::SENSOR, "SENSOR EXTERNAL Pressure=%f temperature=%f depth=%f, altitude=%f\n", latestPressureData.pressureEXTERNAL, latestPressureData.temperatureEXTERNAL, latestPressureData.depth, latestPressureData.altitudee);
+    Log.info(module::SENSOR, ", SENSOR EXTERNAL , Pressure=%f , temperature=%f , depth=%f , altitude=%f\n", latestPressureData.pressureEXTERNAL, latestPressureData.temperatureEXTERNAL, latestPressureData.depth, latestPressureData.altitudee);
   }
 }
 
@@ -161,7 +161,7 @@ long getPressure_M300_BLADDER(bool logprint)
     Wire.write(0);
     Wire.endTransmission();
     if (logprint) {
-      Log.info(module::SENSOR, "SENSOR BLADDER Pressure=%fpsi, temp=%fc, stat=%hhx\n", pressure, temperature, status);
+      Log.info(module::SENSOR, ", SENSOR BLADDER , Pressure=%fpsi, temp=%fc, stat=%hhx\n ", pressure, temperature, status);
       latestPressureData.pressureBLADDER = pressure;
     }
   }
@@ -224,7 +224,7 @@ float getPressure_M300_RESERVOIR(bool logprint)
     Wire1.write(0);
     Wire1.endTransmission();
 
-    Log.info(module::SENSOR, "SENSOR RESERVOIR Pressure=%fpsi, temp=%fc, stat=%hhx\n", pressure, temperature, status);
+    Log.info(module::SENSOR, ", SENSOR RESERVOIR , Pressure=%fpsi, temp=%fc, stat=%hhx\n", pressure, temperature, status);
     //Log.info(module::SENSOR, "SENSOR RESERVOIR Pressure %ld\n", Pressure);
     latestPressureData.pressureRESERVOIR = pressure;
 
@@ -363,7 +363,7 @@ void vt100DashDisplayPressure(bool refreshAll, int x, int y) {
 //    Wire1.write(0);
 //    Wire1.endTransmission();
 //
-//    Log.info(module::SENSOR, "SENSOR BLADDER Pressure %ld finalnum=%ld p1=%ld, p2=%ld stat=%i\n", Pressure, finalnum, Pval, Pval2, pressureStatus);
+//    Log.info(module::SENSOR, ", SENSOR BLADDER Pressure %ld finalnum=%ld p1=%ld, p2=%ld stat=%i\n", Pressure, finalnum, Pval, Pval2, pressureStatus);
 //    //Log.info(module::SENSOR, "SENSOR RESERVOIR Pressure %ld\n", Pressure);
 //  }
 //  return Pressure;
