@@ -11,7 +11,7 @@
 */
 #include <Adafruit_INA260.h>
 
-#define POWER_SENSOR_REFRESH_RATE 10000 //in milliseconds
+#define POWER_SENSOR_REFRESH_RATE 1000 //in milliseconds
 
 #define PWR_ADDRESS_5V        0x41
 #define PWR_ADDRESS_3V        0x40

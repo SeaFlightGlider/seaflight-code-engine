@@ -86,14 +86,14 @@ void pumpMotorSpin(int dir, int pwm) {
     if (pwm >= PWM_ZERO && pwm <= PWM_MAX) {
       if (dir == DIRECTION_IN) {
         Log.info(module::ENGINE, "PUMP: pumpMotorSpin DIRECTION_IN\n");
-        digitalWrite(CCW_PIN, LOW);
-        digitalWrite(CW_PIN, HIGH);
+        digitalWrite(CCW_PIN, HIGH);
+        digitalWrite(CW_PIN, LOW);
         myservo.write(pwm);
       }
       else if (dir == DIRECTION_OUT) {
         Log.info(module::ENGINE, "PUMP: pumpMotorSpin DIRECTION_OUT\n");
-        digitalWrite(CCW_PIN, HIGH);
-        digitalWrite(CW_PIN, LOW);
+        digitalWrite(CCW_PIN, LOW);
+        digitalWrite(CW_PIN, HIGH);
         myservo.write(pwm);
       }
     }
