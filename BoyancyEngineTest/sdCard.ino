@@ -13,13 +13,15 @@ const int chipSelect = BUILTIN_SDCARD; //SDCARD_SS_PIN;   //todo: remove board s
 bool validSDCard = false;
 long previousMillisStorage = 0;
 
+String FileTXTNames = "";
+
 void setupStorage() {
   if (!SD.begin(chipSelect)) {
     validSDCard = false;
-    Serial.println("NOT DETECTED: SD Card");
+    Serial.println("NOT DETECTED:, SD Card");
   }
   else {
-    Serial.println("DETECTED: SD Card");
+    Serial.println("DETECTED:, SD Card");
     validSDCard = true;
   }
   root = SD.open("/");
@@ -71,7 +73,7 @@ void loopStorageToSerial() {
     userfirstinput = Serial.readStringUntil('\n');
     Serial.print(userfirstinput);
   }
-  if (userfirstinput == "ile") {// <-----This one right here officer
+  if (userfirstinput == "ile") {// <-----"This one right here officer", cuts out first letter
     printDirectory(root, 0);
     Serial.println("");
     Serial.println("Which file would you like to open?");
@@ -91,6 +93,28 @@ void loopStorageToSerial() {
       }
     }
   }
+  if (userfirstinput == "llfile") {
+    printDirectory(root, 0);
+    Serial.print("Printing all files on SD Card");
+    userfirstinput = "nothing";
+    char charBuff[20000];
+    FileTXTNames.toCharArray(charBuff, FileTXTNames.length()); // <--- converts string to Char array to be then split by the strtok function this then is opened by the file opener
+
+    char * pch;
+    pch = strtok (charBuff, ", ");
+    while (pch != NULL) {
+      Serial.println("");
+      Serial.println("");
+      Serial.println(pch);
+      Serial.println("");
+      pch = strtok (NULL, ", ");
+      root = SD.open(pch);
+      //Serial.print(pch); <--- doesn't work, causes nulls
+      while (root.available()) {
+        Serial.write(root.read());
+      }
+    }
+  }
 }
 
 void printDirectory(File dir, int numTabs) {
@@ -105,6 +129,9 @@ void printDirectory(File dir, int numTabs) {
       Serial.print('\t');
     }
     Serial.print(entry.name());
+    FileTXTNames += entry.name(); // <--- adds the files names to a string
+    FileTXTNames += ","; //          <--- adds a comma to the end to divide them
+
     if (entry.isDirectory()) {
       Serial.println("/");
       printDirectory(entry, numTabs + 1);
