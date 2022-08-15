@@ -45,18 +45,29 @@ void setupLCDDisplay() {
   display.display();
 }
 
+void serialDisplay(int serialDelay){
+  display.clearDisplay();
+  display.setCursor(0,0);
+  if (Serial){
+    display.print("serial connected ");
+  } else{
+    display.print("looking for serial connection ");
+  }
+  display.print(serialDelay);
+  display.display();
+}
+
 void loopLCDDisplay() {
   unsigned long currentMillis = millis();
   if (currentMillis - previousMillisLCDRefresh > LCD_REFRESH_DELAY) {
     previousMillisLCDRefresh = millis();
-    if (displayCNT++ > 10) {
+    if (displayCNT++ > 1) {
       display.clearDisplay();
       displayWritePressureReservoir();
       displayWritePressureBladder();
       displayWritePumpTestState();
       displayWriteTOF();
       displaySolenoidState();
-      //displayWriteInput();
       displayCNT = 0;
     }
     //displayWriteTimeDate();
@@ -64,34 +75,22 @@ void loopLCDDisplay() {
   }
 }
 
-void displayWriteTimeDate() {
-  display.setCursor(0, 4);
-  display.print(currentDate);
-  display.print(currentTime);
-}
 void displayWritePressureReservoir() {
-  
-  display.setCursor(0, 20);
-  display.print("reservoir P=");
-  display.print(latestPressureM300_RESERVOIR);
+  if (validPressureBLADDER){
+    display.setCursor(0, 20);
+    display.print("reservoir P=");
+    display.print(latestPressureData.pressureRESERVOIR);
+  }
 }
 
 void displayWritePressureBladder() {
-  display.setCursor(0, 10);
-  display.print("Bladder P=");
-  display.print(latestPressureM300_BLADDER);
+  if (validPressureBLADDER) {
+    display.setCursor(0, 10);
+    display.print("Bladder P=");
+    display.print(latestPressureData.pressureBLADDER);
+  }
 }
 
-void displayWriteInput() {
-  if (stopButtonON) {
-    display.setCursor(18, 4);
-    display.print("S");
-  }
-  else {
-    display.setCursor(18, 4);
-    display.print(" ");
-  }
-}
 void displayWriteTOF() {
   display.setCursor(0, 0);
   if (reservoirDistanceTOF == 255) {

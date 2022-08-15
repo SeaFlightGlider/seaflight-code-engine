@@ -178,10 +178,15 @@ void setup() {
 
   int serialDelay = 0;
 
-  while (!Serial || serialDelay < 8) {
-    ; // wait for serial port to connect. Needed for native USB port only
+  while (serialDelay < 8) {
+    if (!Serial) { 
+    // wait for serial port to connect. Needed for native USB port only
+    serialDisplay(serialDelay);
     delay(100);
     serialDelay++;
+    } else{
+      break;
+    }
   }
 
   delay(2000);
