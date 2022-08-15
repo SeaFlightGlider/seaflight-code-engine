@@ -37,12 +37,12 @@ struct PowerMeasurement {
 };
 //
 PowerMeasurement pwrMons[TOTAL_CURRENT_SENSORS] = {
-  {millis(), PWR_ADDRESS_3V, false, 0, 0.0, 0.0, Adafruit_INA260(), "3V"},
-  {millis(), PWR_ADDRESS_5V, false, 0, 0.0, 0.0, Adafruit_INA260(), "5V"},
-  {millis(), PWR_ADDRESS_ENGINE, false, 0, 0.0, 0.0, Adafruit_INA260(), "Engine"},
-  {millis(), PWR_ADDRESS_PUMP, false, 0, 0.0, 0.0, Adafruit_INA260(), "Pump"},
-  {millis(), PWR_ADDRESS_SOLENOID, false, 0, 0.0, 0.0, Adafruit_INA260(), "Turbine"},
-  {millis(), PWR_ADDRESS_TURBINE, false, 0, 0.0, 0.0, Adafruit_INA260(), "Solenoid"}
+  {rtc.stringTime(), PWR_ADDRESS_3V, false, 0, 0.0, 0.0, Adafruit_INA260(), "3V"},
+  {rtc.stringTime(), PWR_ADDRESS_5V, false, 0, 0.0, 0.0, Adafruit_INA260(), "5V"},
+  {rtc.stringTime(), PWR_ADDRESS_ENGINE, false, 0, 0.0, 0.0, Adafruit_INA260(), "Engine"},
+  {rtc.stringTime(), PWR_ADDRESS_PUMP, false, 0, 0.0, 0.0, Adafruit_INA260(), "Pump"},
+  {rtc.stringTime(), PWR_ADDRESS_SOLENOID, false, 0, 0.0, 0.0, Adafruit_INA260(), "Turbine"},
+  {rtc.stringTime(), PWR_ADDRESS_TURBINE, false, 0, 0.0, 0.0, Adafruit_INA260(), "Solenoid"}
 };
 
 void setupPower() {
