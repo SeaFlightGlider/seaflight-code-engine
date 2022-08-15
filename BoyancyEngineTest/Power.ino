@@ -24,8 +24,9 @@
 
 unsigned long previousMillisPressurePower = 0;
 unsigned long intervalPowerSensors = POWER_SENSOR_REFRESH_RATE;
-
+//Sets PowerMeasurment as structure
 struct PowerMeasurement {
+  int timee = 0;
   char address = 0x00;
   bool valid = false;
   float current = 0.0;
@@ -34,14 +35,14 @@ struct PowerMeasurement {
   Adafruit_INA260 pwrMon;
   const char* busName;
 };
-
+//
 PowerMeasurement pwrMons[TOTAL_CURRENT_SENSORS] = {
-  {PWR_ADDRESS_3V, false, 0.0, 0.0, 0.0, Adafruit_INA260(), "3V"},
-  {PWR_ADDRESS_5V, false, 0.0, 0.0, 0.0, Adafruit_INA260(), "5V"},
-  {PWR_ADDRESS_ENGINE, false, 0.0, 0.0, 0.0, Adafruit_INA260(), "Engine"},
-  {PWR_ADDRESS_PUMP, false, 0.0, 0.0, 0.0, Adafruit_INA260(), "Pump"},
-  {PWR_ADDRESS_SOLENOID, false, 0.0, 0.0, 0.0, Adafruit_INA260(), "Turbine"},
-  {PWR_ADDRESS_TURBINE, false, 0.0, 0.0, 0.0, Adafruit_INA260(), "Solenoid"}
+  {rtc.stringTime(), PWR_ADDRESS_3V, false, 0, 0.0, 0.0, Adafruit_INA260(), "3V"},
+  {rtc.stringTime(), PWR_ADDRESS_5V, false, 0, 0.0, 0.0, Adafruit_INA260(), "5V"},
+  {rtc.stringTime(), PWR_ADDRESS_ENGINE, false, 0, 0.0, 0.0, Adafruit_INA260(), "Engine"},
+  {rtc.stringTime(), PWR_ADDRESS_PUMP, false, 0, 0.0, 0.0, Adafruit_INA260(), "Pump"},
+  {rtc.stringTime(), PWR_ADDRESS_SOLENOID, false, 0, 0.0, 0.0, Adafruit_INA260(), "Turbine"},
+  {rtc.stringTime(), PWR_ADDRESS_TURBINE, false, 0, 0.0, 0.0, Adafruit_INA260(), "Solenoid"}
 };
 
 void setupPower() {
@@ -67,7 +68,15 @@ void loopPower() {
         pwrMons[x].current = pwrMons[x].pwrMon.readCurrent();
         pwrMons[x].busVoltage = pwrMons[x].pwrMon.readBusVoltage();
         pwrMons[x].power = pwrMons[x].pwrMon.readPower();
-        Log.info(module::LOOP,"POWER: %s Voltage: %F, Current: %F, Power: %F %d\n", pwrMons[x].busName, pwrMons[x].busVoltage, pwrMons[x].current, pwrMons[x].power);  
+        //Dont even need to fix V because I just need to add time stamp then format it.
+        if(timecode ==0){
+          Log.info(module::SETUP,", Time:    , POWER:   , Voltage:    , Current:    , Power:    \n");
+          timecode = 1;
+        }
+        else{
+          Log.info(module::LOOP,", %u   , %s    , %F    , %F    , %F     \n", millis(), pwrMons[x].busName, pwrMons[x].busVoltage, pwrMons[x].current, pwrMons[x].power);
+        }
+        
       }
       else {
 

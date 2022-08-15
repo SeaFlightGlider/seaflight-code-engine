@@ -42,7 +42,8 @@ void loopTOF() {
       uint8_t status = vl.readRangeStatus();
       reservoirDistanceTOF = range;
 
-      //Log.info(module::SENSOR, "TOF: Range= %hhu Lux=%f\n", reservoirDistanceTOF, lux);
+      Log.info(module::SENSOR, ", TOF:, Range= %hhu , Lux=%f\n", reservoirDistanceTOF, lux);
+
 
       if  ((status >= VL6180X_ERROR_SYSERR_1) && (status <= VL6180X_ERROR_SYSERR_5) && SENSOR_DEBUG_PRINT) {
         Log.error(module::SENSOR, "TOF: VL6180X_ERROR_SYSERR_1\n");
