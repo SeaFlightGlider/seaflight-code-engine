@@ -74,7 +74,7 @@ void loopPower() {
           timecode = 1;
         }
         else{
-          Log.info(module::LOOP,", %u   , %s    , %F    , %F    , %F     \n", millis(), pwrMons[x].busName, pwrMons[x].busVoltage, pwrMons[x].current, pwrMons[x].power);
+          Log.info(module::LOOP,", %u   , %s    , %F    , %F    , %F     \n", rtc.stringTime(), pwrMons[x].busName, pwrMons[x].busVoltage, pwrMons[x].current, pwrMons[x].power);
         }
         
       }
