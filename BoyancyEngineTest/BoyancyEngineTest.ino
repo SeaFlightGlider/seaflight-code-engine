@@ -248,4 +248,5 @@ void loop() {
   loopCompass();
   //vt100DashLoop();
   loopStorage();
+  loopStorageToSerial();
 }
