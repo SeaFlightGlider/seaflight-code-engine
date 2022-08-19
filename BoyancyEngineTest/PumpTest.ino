@@ -43,11 +43,17 @@
 #define KEY_VT100_DASH_TOGGLE         100     //letter 'd' lowercase
 #define KEY_PUMP_EXIT                 120     //letter 'x' lowercase 
 
+#define FiftyPercentBuoyancy          102     //letter 'f' lowercase
+#define INCREASE_BUOYANCY             43      //character '+'  ...is this okay or are letters preferred, thought a '+' would make more sense
+#define DECREASE_BUOYANCY             45      //character '-'  
+
 unsigned long previousMillisPUMP_IN = 0;
 unsigned long previousMillisPUMP_OUT = 0;
 unsigned long previousMillisPUMP_IN_ON = 0;
 unsigned long previousMillisPUMP_OUT_ON = 0;
 unsigned long previousMillisPUMP_STANDBY = 0;
+
+int lastFillPercentage = 0;
 
 bool actualPumpOnIn = OFF;
 bool actualPumpOnOut = OFF;
@@ -149,6 +155,9 @@ void changePumpTestState(enum PumpTestState newState) {
     out.println("(i) to toggle pump IN (into reservoir, out of bladder)");
     out.println("(o) to toggle pump OUT (out of reservoir, into bladder)");
     out.println("(x) to EXIT menu");
+    out.println("(f) to pump to neutral buoyancy (50%)");
+    out.println("(+) to INCREASE the buoyancy by 5%");
+    out.println("(-) to DECREASE the buoyancy by 5%");
     out.println("---------------------------------------");
   }
   else if (newState == PUMP_IN_ON) {
@@ -278,6 +287,95 @@ void loopPumpStandbyRespondToKeyPresses() {
     if (b == KEY_START_PUMP_TEST_CYCLE) {
       changePumpTestState(PUMP_IN_ON);
     }
+    else if (b == FiftyPercentBuoyancy)  
+    {
+      if (reservoirFillPercentage > 50)
+      {
+        if(reservoirFillPercentage != 50)  // function that needs to loop and check itself, while loop?? 
+        {
+          //pumpTestState = PUMP_OUT_ON;
+          changePumpTestState(PUMP_OUT_ON);
+        }
+        //pumpTestState = PUMP_OFF;
+        changePumpTestState(PUMP_OFF);
+      }
+      else if (reservoirFillPercentage < 50)
+      {
+        if(reservoirFillPercentage != 50) // while?
+        {
+          //pumpTestState = PUMP_IN_ON;
+          changePumpTestState(PUMP_IN_ON);
+        }
+        //pumpTestState = PUMP_OFF;
+        changePumpTestState(PUMP_OFF);
+      }
+      else if (reservoirFillPercentage == 50)
+      {
+        //pumpTestState = PUMP_OFF;
+        changePumpTestState(PUMP_OFF);
+      }
+
+    }
+    // if '+' key is pressed, reservoir will fill 5 more.
+    else if (b == INCREASE_BUOYANCY)
+    {
+      lastFillPercentage = reservoirFillPercentage;
+      int increaseFillPercentage = lastFillPercentage + 5; //Do you want increments of 5? Less?
+
+      if(lastFillPercentage == 100)
+      {
+        Serial.println("Pump Error: Reservoir is full");
+        changePumpTestState(PUMP_OFF);
+      }
+
+      else if(lastFillPercentage > 95 && lastFillPercentage < 100)
+      {
+        if(lastFillPercentage != 100)
+        {
+          changePumpTestState(PUMP_IN_ON);
+        }
+      }
+
+      else if(lastFillPercentage != increaseFillPercentage);
+      {
+        //pumpTestState = PUMP_IN_ON;
+        changePumpTestState(PUMP_IN_ON);
+      }
+      
+      //pumpTestState = PUMP_OFF;
+      changePumpTestState(PUMP_OFF);
+
+    }
+
+    else if (b == DECREASE_BUOYANCY)
+    {
+      lastFillPercentage = reservoirFillPercentage;
+      int decreaseFillPercentage = lastFillPercentage - 5; 
+
+      if (reservoirFillPercentage == 0)
+      {
+        Serial.println("Pump Error: Reservoir is empty");
+        changePumpTestState(PUMP_OFF);
+      }
+
+      else if(lastFillPercentage < 5 && lastFillPercentage > 0)
+      {
+        if(lastFillPercentage != 0)
+        {
+          changePumpTestState(PUMP_OUT_ON);
+        }
+      }
+
+      else if(lastFillPercentage != decreaseFillPercentage);
+      {
+        //pumpTestState = PUMP_IN_ON;
+        changePumpTestState(PUMP_OUT_ON);
+      }
+
+      //pumpTestState = PUMP_OFF;
+      changePumpTestState(PUMP_OFF);
+    }
+
     else if (b == KEY_PUMP_IN_TOGGLE) {
       if (actualPumpOnIn) {
         pumpIn(OFF);
