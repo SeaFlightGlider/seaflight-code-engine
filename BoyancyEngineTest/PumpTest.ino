@@ -47,7 +47,8 @@
 #define KEY_INCREASE_BUOYANCY             43      //character '+'  ...is this okay or are letters preferred, thought a '+' would make more sense
 #define KEY_DECREASE_BUOYANCY             45      //character '-'
 
-#define PUMP_PERCENTAGE_JUMP          2  
+#define PUMP_PERCENTAGE_JUMP              2  
+#define RESERVOIR_FILL_INC_DEC_PERCENTAGE 5
 
 unsigned long previousMillisPUMP_IN = 0;
 unsigned long previousMillisPUMP_OUT = 0;
@@ -316,13 +317,13 @@ void loopPumpStandbyRespondToKeyPresses() {
     // if '+' key is pressed, reservoir will fill 5 more.
     else if (b == KEY_INCREASE_BUOYANCY)
     {
-      increaseBuoyancy(reservoirFillPercentage, 5);
+      increaseBuoyancy(reservoirFillPercentage, RESERVOIR_FILL_INC_DEC_PERCENTAGE);
 
     }
 
     else if (b == KEY_DECREASE_BUOYANCY)
     {
-      decreaseBuoyancy(reservoirFillPercentage, 5);
+      decreaseBuoyancy(reservoirFillPercentage, RESERVOIR_FILL_INC_DEC_PERCENTAGE);
     }
 
     else if (b == KEY_PUMP_IN_TOGGLE) {

@@ -28,6 +28,9 @@
 
 #define FIRMWARE_VERSION    0.1
 
+
+int reservoirFillPercentage = 0;
+
 enum module {   //for logging modules..
   SETUP = 0,
   LOOP,

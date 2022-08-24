@@ -19,13 +19,12 @@
 
 int reservoirDistanceTOF = 0;
 unsigned long previousReservoirDistanceTOF = 0;
-int reservoirFillPercentage = 0;
 bool validTOF = false;
 unsigned long previousMillisTOF = 0;
 long intervalTOF = PRESSURE_SENSOR_REFRESH_RATE;
 
-int pumpInRotations = 0;
-int pumpOutRotations = 0;
+//int pumpInRotations = 0;
+//int pumpOutRotations = 0;
 
 
 
@@ -53,11 +52,8 @@ void loopTOF() {
       reservoirDistanceTOF = range;
       reservoirFillPercentage = TOFtoPercentage();
 
-      Log.info(module::SENSOR, "TOF: Range= %hhu Lux=%f\n", reservoirDistanceTOF, lux);
-      Log.info(module::SENSOR, "TOF: Range= %hhu", reservoirDistanceTOF);
-      Log.info(module::SENSOR, "TOF: Percentage= %hhu\n", reservoirFillPercentage);
-
-
+      Log.info(module::SENSOR, "TOF: Range = %hhu Lux = %f Percentage = %hhu\n", reservoirDistanceTOF, lux, reservoirFillPercentage);
+      
       
 
       if  ((status >= VL6180X_ERROR_SYSERR_1) && (status <= VL6180X_ERROR_SYSERR_5) && SENSOR_DEBUG_PRINT) {
@@ -116,6 +112,8 @@ int TOFtoPercentage() //maybe not a global variable
   }
 }
 
+
+/*
 void validatePumpStates() 
 {
   //look for change in state
@@ -136,7 +134,7 @@ void validatePumpStates()
     }
     else
     {
-      break;
+      //error
     }
   }
 
@@ -146,17 +144,17 @@ void validatePumpStates()
     {
       Log.error(module::SENSOR, "TOF: Pump failure, increasing when should be decreasing\n");
     }
-    else if(pumpInRotations < /*correct amount of rotations*/) //pump speed required to ensure pump is functioning as intended.
+    else if(pumpInRotations < //correct amount of rotations) //pump speed required to ensure pump is functioning as intended.
     {
       Log.error(module::SENSOR, "TOF: Pump failure, not pumping in correctly (too slow)\n"); //?
     } 
-    else if (pumpInRotations > /*correct amount of rotations*/)
+    else if (pumpInRotations > //correct amount of rotations)
     {
       Log.error(module::SENSOR, "TOF: Pump failure, not pumping in correctly (too fast)\n");//?
     }
     else
     {
-      break;
+      //error
     }
   }
 
@@ -166,20 +164,22 @@ void validatePumpStates()
     {
       Log.error(module::SENSOR, "TOF: Pump failure, decreasing when should be increasing\n");
     }
-    else if(pumpOutRotations < /*correct amount of rotations*/) //pump speed required to ensure pump is functioning as intended.
+    else if(pumpOutRotations < //correct amount of rotations) //pump speed required to ensure pump is functioning as intended.
     {
       Log.error(module::SENSOR, "TOF: Pump failure, not pumping out correctly (too slow)\n"); //?
     } 
-    else if(pumpOutRotations > /*correct amount of rotations*/)
+    else if(pumpOutRotations > //correct amount of rotations)
     {
       Log.error(module::SENSOR, "TOF: Pump failure, not pumping out correctly (too fast)\n"); //?
     }
     else
     {
-      break;
+      //error
     }
   }
 
 }
+*/
+
 
 
