@@ -13,7 +13,7 @@
     -
 */
 #include <math.h>
-#define PRESSURE_SENSOR_REFRESH_RATE 100 //in milliseconds // change back to 5000
+#define PRESSURE_SENSOR_REFRESH_RATE 200 //in milliseconds // change back to 5000
 #define TOFmin 160 
 #define TOFmax 20
 
