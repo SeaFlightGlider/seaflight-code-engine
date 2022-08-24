@@ -67,7 +67,7 @@ void loopPower() {
         pwrMons[x].current = pwrMons[x].pwrMon.readCurrent();
         pwrMons[x].busVoltage = pwrMons[x].pwrMon.readBusVoltage();
         pwrMons[x].power = pwrMons[x].pwrMon.readPower();
-        //Log.info(module::LOOP,"POWER: %s Voltage: %F, Current: %F, Power: %F %d\n", pwrMons[x].busName, pwrMons[x].busVoltage, pwrMons[x].current, pwrMons[x].power);  
+        Log.info(module::LOOP,"POWER: %s Voltage: %F, Current: %F, Power: %F %d\n", pwrMons[x].busName, pwrMons[x].busVoltage, pwrMons[x].current, pwrMons[x].power);  
       }
       else {
 

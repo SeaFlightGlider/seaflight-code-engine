@@ -12,7 +12,7 @@
     - add clock sync
     -
 */
-#include <math.h>
+
 #define PRESSURE_SENSOR_REFRESH_RATE 200 //in milliseconds // change back to 5000
 #define TOFmin 160 
 #define TOFmax 20
@@ -53,15 +53,9 @@ void loopTOF() {
       reservoirDistanceTOF = range;
       reservoirFillPercentage = TOFtoPercentage();
 
-      //Log.info(module::SENSOR, "TOF: Range= %hhu Lux=%f\n", reservoirDistanceTOF, lux);
-            //Log.info(module::SENSOR, "TOF: Range= %hhu", reservoirDistanceTOF);
-
-
-      //Log.info(module::SENSOR, "TOF: Percentage= %hhu\n", reservoirFillPercentage);
-      Serial.print(reservoirFillPercentage);
-      Serial.print(" ");
-      Serial.println(reservoirDistanceTOF);
-           
+      Log.info(module::SENSOR, "TOF: Range= %hhu Lux=%f\n", reservoirDistanceTOF, lux);
+      Log.info(module::SENSOR, "TOF: Range= %hhu", reservoirDistanceTOF);
+      Log.info(module::SENSOR, "TOF: Percentage= %hhu\n", reservoirFillPercentage);
 
 
       

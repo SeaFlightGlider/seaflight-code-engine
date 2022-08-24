@@ -43,9 +43,10 @@
 #define KEY_VT100_DASH_TOGGLE         100     //letter 'd' lowercase
 #define KEY_PUMP_EXIT                 120     //letter 'x' lowercase 
 
-#define FiftyPercentBuoyancy          102     //letter 'f' lowercase
-#define INCREASE_BUOYANCY             43      //character '+'  ...is this okay or are letters preferred, thought a '+' would make more sense
-#define DECREASE_BUOYANCY             45      //character '-'
+#define KEY_FIFTY_PERCENT_BUOYANCY        102     //letter 'f' lowercase
+#define KEY_INCREASE_BUOYANCY             43      //character '+'  ...is this okay or are letters preferred, thought a '+' would make more sense
+#define KEY_DECREASE_BUOYANCY             45      //character '-'
+
 #define PUMP_PERCENTAGE_JUMP          2  
 
 unsigned long previousMillisPUMP_IN = 0;
@@ -55,6 +56,7 @@ unsigned long previousMillisPUMP_OUT_ON = 0;
 unsigned long previousMillisPUMP_STANDBY = 0;
 
 int moveToThisReservoirFillPercentage = 0;
+
 
 bool moveToThisReservoirFillPercentageAction = false;
 bool actualPumpOnIn = OFF;
@@ -104,7 +106,7 @@ void loopPumpTest() {
         }
         else if (moveToThisReservoirFillPercentageAction == true)
         {
-          else if (reservoirFillPercentage >= moveToThisReservoirFillPercentage) 
+          if (reservoirFillPercentage >= moveToThisReservoirFillPercentage) 
           {
             changePumpTestState(PUMP_OFF);
             moveToThisReservoirFillPercentageAction = false;
@@ -127,7 +129,7 @@ void loopPumpTest() {
         }
         else if (moveToThisReservoirFillPercentageAction == true)
         {
-          else if (reservoirFillPercentage <= moveToThisReservoirFillPercentage) 
+          if (reservoirFillPercentage <= moveToThisReservoirFillPercentage) 
           {
             changePumpTestState(PUMP_OFF);
             moveToThisReservoirFillPercentageAction = false;
@@ -306,69 +308,21 @@ void loopPumpStandbyRespondToKeyPresses() {
     if (b == KEY_START_PUMP_TEST_CYCLE) {
       changePumpTestState(PUMP_IN_ON);
     }
-    else if (b == FiftyPercentBuoyancy)  
+    else if (b == KEY_FIFTY_PERCENT_BUOYANCY)  
     {
-      
+      pumpToFiftyPercentReservoir(reservoirFillPercentage);
 
     }
     // if '+' key is pressed, reservoir will fill 5 more.
-    else if (b == INCREASE_BUOYANCY)
+    else if (b == KEY_INCREASE_BUOYANCY)
     {
-      lastFillPercentage = reservoirFillPercentage;
-      int increaseFillPercentage = lastFillPercentage + 5; //Do you want increments of 5? Less?
-
-      if(lastFillPercentage == 100)
-      {
-        Serial.println("Pump Error: Reservoir is full");
-        changePumpTestState(PUMP_OFF);
-      }
-
-      else if(lastFillPercentage > 95 && lastFillPercentage < 100) // make edge 90%
-      {
-        if(lastFillPercentage != 100)
-        {
-          changePumpTestState(PUMP_IN_ON);
-        }
-      }
-
-      else if(lastFillPercentage != increaseFillPercentage);
-      {
-        //pumpTestState = PUMP_IN_ON;
-        changePumpTestState(PUMP_IN_ON);
-      }
-      
-      //pumpTestState = PUMP_OFF;
-      changePumpTestState(PUMP_OFF);
+      increaseBuoyancy(reservoirFillPercentage, 5);
 
     }
 
-    else if (b == DECREASE_BUOYANCY)
+    else if (b == KEY_DECREASE_BUOYANCY)
     {
-      lastFillPercentage = reservoirFillPercentage;
-      int decreaseFillPercentage = lastFillPercentage - 5; 
-
-      if (reservoirFillPercentage == 0)
-      {
-        Serial.println("Pump Error: Reservoir is empty");
-        changePumpTestState(PUMP_OFF);
-      }
-
-      else if(lastFillPercentage < 5 && lastFillPercentage > 0)
-      {
-        if(lastFillPercentage != 0)
-        {
-          changePumpTestState(PUMP_OUT_ON);
-        }
-      }
-
-      else if(lastFillPercentage != decreaseFillPercentage);
-      {
-        //pumpTestState = PUMP_IN_ON;
-        changePumpTestState(PUMP_OUT_ON);
-      }
-
-      //pumpTestState = PUMP_OFF;
-      changePumpTestState(PUMP_OFF);
+      decreaseBuoyancy(reservoirFillPercentage, 5);
     }
 
     else if (b == KEY_PUMP_IN_TOGGLE) {
@@ -457,66 +411,61 @@ void vt100DashDisplayStateMachine(bool refreshAll, int x, int y) {
 }
 
 void pumpToFiftyPercentReservoir(int reservoirFillPercentage)
-{
-
-  
+{  
   if (reservoirFillPercentage > 50)
-      {
+  {
       
-        if(reservoirFillPercentage != 50)  // function that needs to loop and check itself, while loop?? 
-        {
-          moveToThisReservoirFillPercentageAction = true;
-          moveToThisReservoirFillPercentage = 50;
-          changePumpTestState(PUMP_OUT_ON);
-        }
+    if(reservoirFillPercentage != 50)  // function that needs to loop and check itself, while loop?? 
+    {
+      moveToThisReservoirFillPercentageAction = true;
+      moveToThisReservoirFillPercentage = 50;
+      changePumpTestState(PUMP_OUT_ON);
+    }
         
         
-      }
-      else if (reservoirFillPercentage < 50)
-      {
-       
-        
-        moveToThisReservoirFillPercentage = 50;
-        moveToThisReservoirFillPercentageAction = true;
-        changePumpTestState(PUMP_IN_ON);
-      
-       
-      }
-      else if (reservoirFillPercentage == 50)
-      {
-        //error already at fifty
-      }
+  }
+  else if (reservoirFillPercentage < 50)
+  {    
+    moveToThisReservoirFillPercentage = 50;
+    moveToThisReservoirFillPercentageAction = true;
+    changePumpTestState(PUMP_IN_ON);
+  }
+    else if (reservoirFillPercentage == 50)
+    {
+      Log.error(module::SENSOR, "TOF: Buoyancy already at 50%\n");
+    }
 }
 
-void increaseBuoyancy()
+void increaseBuoyancy(int reservoirFillPercentage, int desiredFillPercentageOffset)
 {
-  moveToThisReservoirFillPercentage = lastFillPercentage + 5; 
+  int error = 5; 
+  moveToThisReservoirFillPercentage = reservoirFillPercentage + desiredFillPercentageOffset; 
 
-      if(moveToThisReservoirFillPercentage < 90 && moveToThisReservoirFillPercentage > 10)
-      {
-        moveToThisReservoirFillPercentageAction = true;
-        changePumpTestState(PUMP_OUT_ON);
-      }
-      else
-      {
-        //print error
-      }
+  if(moveToThisReservoirFillPercentage < (100 - error - desiredFillPercentageOffset) && moveToThisReservoirFillPercentage > (0 + error + desiredFillPercentageOffset))
+  {
+    moveToThisReservoirFillPercentageAction = true; 
+    changePumpTestState(PUMP_OUT_ON);
+  }
+  else
+  {
+    Log.error(module::SENSOR, "TOF: Failed to increase buoyancy\n");
+  }
 
 }
 
-void decreaseBuoyancy()
+void decreaseBuoyancy(int reservoirFillPercentage, int desiredFillPercentageOffset)
 {
+  int error = 5;
+  moveToThisReservoirFillPercentage = reservoirFillPercentage - desiredFillPercentageOffset; 
 
-      moveToThisReservoirFillPercentage = lastFillPercentage - 5; 
-
-      if(moveToThisReservoirFillPercentage < 90 && moveToThisReservoirFillPercentage > 10)
-      {
-        moveToThisReservoirFillPercentageAction = true;
-        changePumpTestState(PUMP_OUT_ON);
-      }
-      else
-      {
-        //print error
-      }
+  if(moveToThisReservoirFillPercentage < (100 - error - desiredFillPercentageOffset) && moveToThisReservoirFillPercentage > (0 + error + desiredFillPercentageOffset))
+  {
+    moveToThisReservoirFillPercentageAction = true;
+    changePumpTestState(PUMP_OUT_ON);
+  }
+  else
+  {
+    Log.error(module::SENSOR, "TOF: Failed to decrease buoyancy.\n");
+  }
 
 }
